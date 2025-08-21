@@ -13,6 +13,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: TablesRepository::class)]
 #[ApiResource(
@@ -43,14 +44,19 @@ class Tables
 
     #[ORM\OneToMany(targetEntity: GuestList::class, mappedBy: 'tables')]
     #[SerializedName('guests')]
-    private ArrayCollection $guestLists;
+    private Collection $guestLists;
 
-    public function getGuestLists(): ArrayCollection
+    public function __construct()
+    {
+        $this->guestLists = new ArrayCollection();
+    }
+
+    public function getGuestLists(): Collection
     {
         return $this->guestLists;
     }
 
-    public function setGuestLists(ArrayCollection $guestLists): static
+    public function setGuestLists(Collection $guestLists): static
     {
         $this->guestLists = $guestLists;
 
@@ -108,5 +114,10 @@ class Tables
         $this->maxGuests = $maxGuests;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return "Стол $this->num";
     }
 }
