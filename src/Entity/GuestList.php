@@ -6,7 +6,9 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\OpenApi\Model\Operation;
 use App\Repository\GuestListRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -17,6 +19,16 @@ use Symfony\Component\Serializer\Attribute\Groups;
         new Get(),
         new GetCollection(),
         new Patch(denormalizationContext: ['groups' => ['guestList:write']])],
+)]
+#[ApiResource(
+    uriTemplate: 'tables/{id}/guests',
+    operations: [new GetCollection(openapi: new Operation(tags: ['Tables']))],
+    uriVariables: [
+        'id' => new Link(
+            fromProperty: 'guestLists',
+            fromClass: Tables::class
+        )
+    ],
 )]
 class GuestList
 {

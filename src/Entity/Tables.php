@@ -5,24 +5,34 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
+use ApiPlatform\OpenApi\Factory\OpenApiFactory;
+use ApiPlatform\OpenApi\Model\Operation;
+use App\Dto\TablesStats;
 use App\Repository\TablesRepository;
+use App\State\TablesStatsProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints\Unique;
 
 #[ORM\Entity(repositoryClass: TablesRepository::class)]
 #[ApiResource(
     operations: [
         new Get(),
         new GetCollection(),
-        new Patch(denormalizationContext: ['groups'=>['tables:write']])
+        new Patch(denormalizationContext: ['groups'=>['tables:write']]),
+        new GetCollection(uriTemplate: 'tables_stats', output: TablesStats::class, provider: TablesStatsProvider::class)
     ]
 )]
+#[UniqueEntity('num', message: 'Это название уже занято')]
 class Tables
 {
     #[ORM\Id]
@@ -30,7 +40,7 @@ class Tables
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(unique: true)]
     #[Groups(['tables:write'])]
     private ?int $num = null;
 
