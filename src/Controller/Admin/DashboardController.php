@@ -2,7 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Category;
 use App\Entity\GuestList;
+use App\Entity\Product;
 use App\Entity\Tables;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -31,8 +33,10 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToCrud('Столы', 'fas fa-comments', Tables::class);
-        yield MenuItem::linkToCrud('Гости', 'fas fa-map-marker-alt', GuestList::class);
+        yield MenuItem::linkToCrud('Столы', 'fas fa-table', Tables::class);
+        yield MenuItem::linkToCrud('Гости', 'fas fa-users', GuestList::class);
+        yield MenuItem::linkToCrud('Продукты', 'fas fa-cart-shopping', Product::class);
+        yield MenuItem::linkToCrud('Категории', 'fas fa-list', Category::class);
         yield MenuItem::linkToUrl('API', 'fa fa-link', '/api')->setLinkTarget('_blank')
             ->setPermission('ROLE_ADMIN');
     }

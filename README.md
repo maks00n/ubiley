@@ -30,10 +30,6 @@ MYSQL_PASSWORD=changeme
 
 # Doctrine использует эту строку подключения
 DATABASE_URL="mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}?serverVersion=8.0&charset=utf8mb4"
-
-# Данные для команды создания админа
-ADMIN_LOGIN=admin
-ADMIN_PASSWORD=admin123
 ```
 
 Создайте файл `.env.local` (или отредактируйте `.env`) в корне проекта и вставьте значения. Для локальной разработки удобно использовать `.env.local`.

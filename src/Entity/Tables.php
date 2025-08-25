@@ -36,8 +36,8 @@ use Symfony\Component\Validator\Constraints\Unique;
         new Patch(),
         new GetCollection(uriTemplate: 'tables_stats', output: TablesStats::class, provider: TablesStatsProvider::class)
     ],
-    normalizationContext: ['groups'=>['tables:read', 'guestList:read']],
-    denormalizationContext: ['groups'=>['tables:write']]
+    normalizationContext: ['groups' => ['tables:read', 'guestList:read']],
+    denormalizationContext: ['groups' => ['tables:write']]
 )]
 #[UniqueEntity(fields: ['num'], message: 'Это название уже занято')]
 class Tables
