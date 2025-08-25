@@ -22,17 +22,18 @@ class GuestListCrudController extends AbstractCrudController
     {
         return $crud
             ->setPageTitle('index', 'Гости')
-            ->setEntityLabelInSingular('Гость')
-            ->setEntityLabelInPlural('Гости');
+            ->setPageTitle('new', 'Создать нового гостя')
+            ->setPageTitle('detail', 'Гости')
+            ->setPageTitle('edit','Гости')
+            ->setEntityLabelInSingular('гостя')
+            ->setEntityLabelInPlural('гости');
     }
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id')->onlyOnIndex(),
-            BooleanField::new('isPresent', 'Присутствие'),
-            TextField::new('name', 'ФИО'),
-            AssociationField::new('tables', 'Стол')
-        ];
+            yield IdField::new('id')->onlyOnIndex();
+            yield BooleanField::new('isPresent', 'Присутствие');
+            yield TextField::new('name', 'ФИО');
+            yield AssociationField::new('tables', 'Стол');
     }
 }

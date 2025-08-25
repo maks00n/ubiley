@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -16,6 +20,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ArrayFilter;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
@@ -28,32 +33,38 @@ use Symfony\Component\Validator\Constraints\Unique;
     operations: [
         new Get(),
         new GetCollection(),
-        new Patch(denormalizationContext: ['groups'=>['tables:write']]),
+        new Patch(),
         new GetCollection(uriTemplate: 'tables_stats', output: TablesStats::class, provider: TablesStatsProvider::class)
-    ]
+    ],
+    normalizationContext: ['groups'=>['tables:read', 'guestList:read']],
+    denormalizationContext: ['groups'=>['tables:write']]
 )]
-#[UniqueEntity('num', message: 'Это название уже занято')]
+#[UniqueEntity(fields: ['num'], message: 'Это название уже занято')]
 class Tables
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['tables:read', 'guestList:read'])]
     private ?int $id = null;
 
     #[ORM\Column(unique: true)]
-    #[Groups(['tables:write'])]
+    #[Groups(['tables:read', 'guestList:read', 'tables:write'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?int $num = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['tables:write'])]
+    #[Groups(['tables:read', 'guestList:read', 'tables:write'])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['tables:write'])]
+    #[Groups(['tables:read', 'guestList:read', 'tables:write'])]
     private ?int $maxGuests = null;
 
     #[ORM\OneToMany(targetEntity: GuestList::class, mappedBy: 'tables')]
     #[SerializedName('guests')]
+    #[ApiProperty(readableLink: false)]
+    #[Groups(['tables:read', 'guestList:read'])]
     private Collection $guestLists;
 
     public function __construct()
@@ -73,11 +84,13 @@ class Tables
         return $this;
     }
 
+    #[Groups(['tables:read', 'guestList:read'])]
     public function getGuestsDef(): ?int
     {
         return $this->guestLists->count();
     }
 
+    #[Groups(['tables:read', 'guestList:read'])]
     public function getGuestsNow(): ?int
     {
         return $this->guestLists->matching(

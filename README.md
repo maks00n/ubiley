@@ -58,12 +58,6 @@ docker compose exec php composer install --no-interaction
 docker compose exec php php bin/console doctrine:migrations:migrate --no-interaction
 ```
 
-4. Создать администратора:
-
-```bash
-docker compose exec php php bin/console create-admin
-```
-
 ### Доступы и URL
 
 -   **Приложение (Nginx)**: `http://localhost/`
@@ -82,7 +76,7 @@ docker compose restart
 
 ````bash
 docker compose down
-``;
+````
 
 - Полная очистка с удалением volume БД (удалит все данные!):
 

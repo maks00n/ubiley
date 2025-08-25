@@ -24,12 +24,16 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Административная панель');
+            ->setTitle('Административная панель')
+            ->renderContentMaximized()
+            ->generateRelativeUrls();
     }
 
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToCrud('Столы', 'fas fa-comments', Tables::class);
         yield MenuItem::linkToCrud('Гости', 'fas fa-map-marker-alt', GuestList::class);
+        yield MenuItem::linkToUrl('API', 'fa fa-link', '/api')->setLinkTarget('_blank')
+            ->setPermission('ROLE_ADMIN');
     }
 }

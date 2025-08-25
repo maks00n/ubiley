@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
@@ -11,6 +14,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\Repository\GuestListRepository;
 use Doctrine\ORM\Mapping as ORM;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: GuestListRepository::class)]
@@ -18,7 +22,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
     operations: [
         new Get(),
         new GetCollection(),
-        new Patch(denormalizationContext: ['groups' => ['guestList:write']])],
+        new Patch()],
+    normalizationContext: ['groups' => ['guestList:read']],
+    denormalizationContext: ['groups' => ['guestList:write']]
 )]
 #[ApiResource(
     uriTemplate: 'tables/{id}/guests',
@@ -39,17 +45,19 @@ class GuestList
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['guestList:write'])]
+    #[Groups(['guestList:read', 'guestList:write'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     private ?string $name = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['guestList:write'])]
+    #[Groups(['guestList:read', 'guestList:write'])]
+    #[ApiFilter(BooleanFilter::class)]
     private ?bool $isPresent = null;
 
     #[ORM\ManyToOne(targetEntity: Tables::class, inversedBy: 'guestLists')]
-    #[ORM\JoinColumn(name: 'tables_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'tables_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     #[ApiProperty(readableLink: true, writableLink: false)]
-    #[Groups(['guestList:write'])]
+    #[Groups(['guestList:read', 'guestList:write'])]
     private ?Tables $tables = null;
 
     public function getTables(): ?Tables

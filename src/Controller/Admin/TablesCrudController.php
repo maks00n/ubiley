@@ -21,22 +21,20 @@ class TablesCrudController extends AbstractCrudController
     {
         return $crud
             ->setPageTitle('index', 'Столы')
-            ->setPageTitle('new', 'Создать новый Стол')
+            ->setPageTitle('new', 'Создать новый стол')
             ->setPageTitle('detail', 'Стол')
-            ->setPageTitle('edit','Стол')
-            ->setEntityLabelInSingular('Стол')
-            ->setEntityLabelInPlural('Столы');
+            ->setPageTitle('edit', 'Стол')
+            ->setEntityLabelInSingular('стол')
+            ->setEntityLabelInPlural('столы');
     }
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id')->onlyOnIndex(),
-            IntegerField::new('num', 'Номер стола'),
-            TextField::new('description', 'Описание'),
-            IntegerField::new('maxGuests', 'Макс количество человек'),
-            IntegerField::new('guestsDef', 'Гостей')->onlyOnIndex(),
-            IntegerField::new('guestsNow', 'Присутствует гостей')->onlyOnIndex(),
-        ];
+        yield IdField::new('id')->onlyOnIndex();
+        yield IntegerField::new('num', 'Номер стола');
+        yield TextField::new('description', 'Описание');
+        yield IntegerField::new('maxGuests', 'Макс количество человек');
+        yield IntegerField::new('guestsDef', 'Гостей')->onlyOnIndex();
+        yield IntegerField::new('guestsNow', 'Присутствует гостей')->onlyOnIndex();
     }
 }
